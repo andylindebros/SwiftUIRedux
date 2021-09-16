@@ -4,6 +4,15 @@ Based on [ReSwift](https://github.com/ReSwift/ReSwift) but with support for Swif
 
 SwiftUIRedux provides a redux state for your SwiftUI project. The state gets updated by dispatching actions using the dispatch function within the store.
 
+## Installation
+Install SwiftUIRedux using Swift Package Manager
+
+```Swift
+dependencies: [
+    .package(url: "https://github.com/andylindebros/SwiftUIRedux", from: "0.0.0"),
+]
+```
+
 ## Implementation example
 
 Create a file named `Redux.swift` and add following content
