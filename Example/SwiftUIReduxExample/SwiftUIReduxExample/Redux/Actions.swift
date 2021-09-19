@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUIRedux
 
-struct SomeAction: Action, Codable {
+struct SomeAction: Action {
     var payload: String
 }
 

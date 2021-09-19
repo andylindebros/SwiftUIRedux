@@ -1,4 +1,4 @@
-public protocol Action: CustomStringConvertible, Encodable {}
+public protocol Action: CustomStringConvertible, Codable {}
 
 public extension Action {
     var description: String {
@@ -6,4 +6,4 @@ public extension Action {
     }
 }
 
-public struct SwiftUIReduxInit: Action, Encodable {}
+public struct SwiftUIReduxInit: Action {}
