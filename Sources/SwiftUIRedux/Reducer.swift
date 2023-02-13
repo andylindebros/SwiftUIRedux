@@ -1,2 +1,2 @@
 public typealias Reducer<ReducerStateType> =
-    (_ action: Action, _ state: ReducerStateType?) -> ReducerStateType
+    @MainActor(_ action: Action, _ state: ReducerStateType) -> ReducerStateType

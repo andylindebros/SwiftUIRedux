@@ -1,46 +1,38 @@
 import Foundation
 
-open class Store<State: Codable> {
-    public private(set) var state: State!
+@MainActor
+public final class Store<State: Codable> {
+    public private(set) var state: State
 
-    public lazy var dispatchFunction: DispatchFunction! = createDispatchFunction()
+    public lazy var dispatchFunction: DispatchFunction = createDispatchFunction()
 
     private var reducer: Reducer<State>
 
     private var isDispatching = Synchronized<Bool>(false)
 
-    public var middleware: [Middleware<State>] {
-        didSet {
-            dispatchFunction = createDispatchFunction()
-        }
-    }
+    public var middleware: [Middleware<State>]
 
     public required init(
         reducer: @escaping Reducer<State>,
-        state: State?,
+        state: State,
         middleware: [Middleware<State>] = []
     ) {
         self.reducer = reducer
         self.middleware = middleware
-
-        if let state = state {
-            self.state = state
-        } else {
-            dispatch(SwiftUIReduxInit())
-        }
+        self.state = state
     }
 
-    private func createDispatchFunction() -> DispatchFunction! {
+    private func createDispatchFunction() -> DispatchFunction {
         // Wrap the dispatch function with all middlewares
         return middleware
             .reversed()
             .reduce(
-                { [unowned self] action in
+                { @MainActor [unowned self] action in
                     self._defaultDispatch(action: action) },
                 { dispatchFunction, middleware in
                     // If the store get's deinitialized before the middleware is complete; drop
                     // the action without dispatching.
-                    let dispatch: (Action) -> Void = { [weak self] in self?.dispatch($0) }
+                    let dispatch: DispatchFunction = { [weak self] in self?.dispatch($0) }
                     let getState: () -> State? = { [weak self] in self?.state }
                     return middleware(dispatch, getState)(dispatchFunction)
                 }
@@ -48,7 +40,7 @@ open class Store<State: Codable> {
     }
 
     // swiftlint:disable:next identifier_name
-    open func _defaultDispatch(action: Action) {
+    @MainActor public func _defaultDispatch(action: Action) {
         guard !isDispatching.value else {
             raiseFatalError(
                 "Action has been dispatched while" +
@@ -64,9 +56,7 @@ open class Store<State: Codable> {
         state = newState
     }
 
-    open func dispatch(_ action: Action) {
+    public func dispatch(_ action: Action) {
         dispatchFunction(action)
     }
-
-    public typealias DispatchCallback = (State) -> Void
 }

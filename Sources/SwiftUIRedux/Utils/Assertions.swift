@@ -1,6 +1,7 @@
 import Foundation
 
-func raiseFatalError(_ message: @autoclosure () -> String = "",
+@MainActor
+func raiseFatalError(_ message: @MainActor @autoclosure () -> String = "",
                      file: StaticString = #file, line: UInt = #line) -> Never
 {
     Assertions.fatalErrorClosure(message(), file, line)

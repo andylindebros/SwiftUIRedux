@@ -2,11 +2,12 @@ import Foundation
 import ReduxMonitor
 import SwiftUIRedux
 
-class AppState: ObservableObject, Codable {
+
+final class AppState: ObservableObject, Codable {
     @Published fileprivate(set) var name = "Andy"
 
     init() {}
-    required init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         name = try values.decode(String.self, forKey: .name)
     }
@@ -20,8 +21,7 @@ class AppState: ObservableObject, Codable {
         try container.encode(name, forKey: .name)
     }
 
-    static func reducer(action: Action, state: AppState?) -> AppState {
-        let state = state ?? AppState()
+    @MainActor static func reducer(action: Action, state: AppState) -> AppState {
         switch action {
         case let a as SomeAction:
             state.name = a.payload
@@ -36,16 +36,15 @@ class AppState: ObservableObject, Codable {
         return state
     }
 
-    static func createStore(
-        initState: AppState? = nil
+    
+    @MainActor static func createStore(
+        initState: AppState = AppState()
     ) -> Store<AppState> {
         var middlewares = [Middleware<AppState>]()
 #if DEBUG
         middlewares.append(AppState.createReduxMontitorMiddleware(monitor: ReduxMonitor()))
 #endif
-        let store = Store<AppState>(reducer: AppState.reducer, state: initState, middleware: middlewares)
-
-        return store
+        return Store<AppState>(reducer: AppState.reducer, state: initState, middleware: middlewares)
     }
 
 #if DEBUG

@@ -1,4 +1,4 @@
-public protocol Action: CustomStringConvertible, Codable {}
+public protocol Action: CustomStringConvertible, Codable, Sendable {}
 
 public extension Action {
     var description: String {
