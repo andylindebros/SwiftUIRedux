@@ -1,15 +1,19 @@
-// swift-tools-version:5.3
+// swift-tools-version: 5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "SwiftUIRedux",
+    platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "SwiftUIRedux",
             targets: ["SwiftUIRedux"]),
+        .library(
+            name: "SwiftUIReduxTestHelpers",
+            targets: ["SwiftUIReduxTestHelpers"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -22,6 +26,11 @@ let package = Package(
             name: "SwiftUIRedux",
             dependencies: [],
             exclude: ["SwiftReduxExample"]
+        ),
+        .target(
+            name: "SwiftUIReduxTestHelpers",
+            dependencies: ["SwiftUIRedux"],
+            exclude: ["SwiftUIReduxTestHelpers"]
         ),
         .testTarget(
             name: "SwiftUIReduxTests",

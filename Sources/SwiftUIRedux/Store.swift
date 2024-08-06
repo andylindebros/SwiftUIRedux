@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 
 @MainActor
@@ -12,14 +13,20 @@ public final class Store<State: Codable> {
 
     public var middleware: [Middleware<State>]
 
+    public let actionEvent = PassthroughSubject<any Action, Never>()
+
+    private var onDispatchFailure: ((any Action) -> Void)?
+
     public required init(
         reducer: @escaping Reducer<State>,
         state: State,
-        middleware: [Middleware<State>] = []
+        middleware: [Middleware<State>] = [],
+        onDispatchFailure: ((any Action) -> Void)? = nil
     ) {
         self.reducer = reducer
         self.middleware = middleware
         self.state = state
+        self.onDispatchFailure = onDispatchFailure
     }
 
     private func createDispatchFunction() -> DispatchFunction {
@@ -42,18 +49,24 @@ public final class Store<State: Codable> {
     // swiftlint:disable:next identifier_name
     @MainActor public func _defaultDispatch(action: Action) {
         guard !isDispatching.value else {
-            raiseFatalError(
+            assertionFailure(
                 "Action has been dispatched while" +
                     " a previous action is being processed. A reducer" +
                     " is dispatching an action, or SwiftUIRedux is used in a concurrent context" +
                     " (e.g. from multiple threads). Action: \(action)"
             )
+            onDispatchFailure?(action)
+            DispatchQueue.main.async { [weak self] in
+                self?._defaultDispatch(action: action)
+            }
+            return
         }
         isDispatching.value { $0 = true }
         let newState = reducer(action, state)
         isDispatching.value { $0 = false }
 
         state = newState
+        actionEvent.send(action)
     }
 
     public func dispatch(_ action: Action) {

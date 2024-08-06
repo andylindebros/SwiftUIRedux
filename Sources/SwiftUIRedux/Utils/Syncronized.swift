@@ -9,9 +9,9 @@ struct Synchronized<Value> {
     }
 
     /// Returns or modify the thread-safe value.
-    var value: Value { return mutex.sync { return _value } }
+    var value: Value { return mutex.sync { _value } }
     /// Submits a block for synchronous, thread-safe execution.
     mutating func value<T>(execute task: (inout Value) throws -> T) rethrows -> T {
-        return try mutex.sync(flags: .barrier) { return try task(&_value) }
+        return try mutex.sync(flags: .barrier) { try task(&_value) }
     }
 }
