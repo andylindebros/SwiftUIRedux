@@ -18,7 +18,7 @@ SwiftUIRedux employs a unidirectional data flow, where the UI  subscribes to dat
 Begin with by defining a subState. You can add properties to the subState but it only changes to the observed struct that triggers changes in the UI.
 ```Swift
 enum Main {
-    struct State: SwiftUIRedux.State {
+    struct State: SubState {
         var storage: String = "development"
 
         // The UI listens to changes in this property
