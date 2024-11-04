@@ -11,8 +11,6 @@
 		1E37F26E2C6212C500A367B1 /* SwiftUIReduxTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 1E37F26D2C6212C500A367B1 /* SwiftUIReduxTestHelpers */; };
 		DCB782532CD63A7700B5F7BF /* SwiftUIRedux in Frameworks */ = {isa = PBXBuildFile; productRef = DCB782522CD63A7700B5F7BF /* SwiftUIRedux */; };
 		DCB782552CD6830F00B5F7BF /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB782542CD6830D00B5F7BF /* Main.swift */; };
-		DCB782582CD7759500B5F7BF /* SideEffectMiddlleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB782572CD7758D00B5F7BF /* SideEffectMiddlleware.swift */; };
-		DCB7825A2CD7830F00B5F7BF /* LoggerMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCB782592CD7830B00B5F7BF /* LoggerMiddleware.swift */; };
 		E6A067D026F3420F00DD524B /* SwiftUIReduxExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A067CF26F3420F00DD524B /* SwiftUIReduxExampleApp.swift */; };
 		E6A067D226F3420F00DD524B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A067D126F3420F00DD524B /* ContentView.swift */; };
 		E6A067D426F3421100DD524B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E6A067D326F3421100DD524B /* Assets.xcassets */; };
@@ -36,8 +34,6 @@
 		1E37F2642C6212BA00A367B1 /* SwiftUIReduxExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SwiftUIReduxExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E37F2662C6212BA00A367B1 /* SwiftUIReduxExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIReduxExampleTests.swift; sourceTree = "<group>"; };
 		DCB782542CD6830D00B5F7BF /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		DCB782572CD7758D00B5F7BF /* SideEffectMiddlleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SideEffectMiddlleware.swift; sourceTree = "<group>"; };
-		DCB782592CD7830B00B5F7BF /* LoggerMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggerMiddleware.swift; sourceTree = "<group>"; };
 		E6A067CC26F3420F00DD524B /* SwiftUIReduxExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUIReduxExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6A067CF26F3420F00DD524B /* SwiftUIReduxExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIReduxExampleApp.swift; sourceTree = "<group>"; };
 		E6A067D126F3420F00DD524B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -127,8 +123,6 @@
 		E6A067EA26F3487B00DD524B /* Redux */ = {
 			isa = PBXGroup;
 			children = (
-				DCB782592CD7830B00B5F7BF /* LoggerMiddleware.swift */,
-				DCB782572CD7758D00B5F7BF /* SideEffectMiddlleware.swift */,
 				DCB782542CD6830D00B5F7BF /* Main.swift */,
 				E6A067E226F3476700DD524B /* AppState.swift */,
 			);
@@ -257,8 +251,6 @@
 			files = (
 				DCB782552CD6830F00B5F7BF /* Main.swift in Sources */,
 				E6A067E326F3476700DD524B /* AppState.swift in Sources */,
-				DCB782582CD7759500B5F7BF /* SideEffectMiddlleware.swift in Sources */,
-				DCB7825A2CD7830F00B5F7BF /* LoggerMiddleware.swift in Sources */,
 				E6A067D226F3420F00DD524B /* ContentView.swift in Sources */,
 				E6A067D026F3420F00DD524B /* SwiftUIReduxExampleApp.swift in Sources */,
 			);

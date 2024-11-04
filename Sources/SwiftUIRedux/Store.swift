@@ -1,32 +1,30 @@
 import Combine
 import Foundation
 
-public protocol ObservedStateProvider {}
+@MainActor public final class Store<S: State> {
+    public private(set) var state: S
 
-@MainActor public protocol ReduxState: Sendable {
-    var observedStates: [any ObservedStateProvider]  { get }
-}
+    public private(set) lazy var dispatch: DispatchFunction = middleware
+        .reversed()
+        .reduce(
+            { [weak self] action in
+                await self?._defaultDispatch(action: action) },
 
-@MainActor public final class Store<State: ReduxState> {
+            { dispatchFunction, middleware in
+                middleware(_dispatch, state)(dispatchFunction)
+            }
+        )
 
-    public private(set) var state: State
-
-    public private(set) var dispatchFunction: DispatchFunction?
-
-    // private var reducer: Reducer<State>
-
-    public var middleware: [Middleware<State>]
+    public var middleware: [Middleware<S>]
 
     public init(
-        // reducer: @escaping Reducer<State>,
-        state: State,
-        middleware: [Middleware<State>] = []
+        state: S,
+        middleware: [Middleware<S>] = []
     ) {
-        // self.reducer = reducer
         self.middleware = middleware
         self.state = state
 
-        dispatchFunction = createDispatchFunction()
+        // dispatchFunction = createDispatchFunction()
     }
 
     func reducer(action: Action) async {
@@ -36,13 +34,12 @@ public protocol ObservedStateProvider {}
     }
 
     private func createDispatchFunction() -> DispatchFunction {
-        // Wrap the dispatch function with all middlewares
         middleware
             .reversed()
             .reduce(
                 { [weak self] action in
-                    await self?._defaultDispatch(action: action) }
-                ,
+                    await self?._defaultDispatch(action: action) },
+
                 { dispatchFunction, middleware in
                     middleware(dispatch, state)(dispatchFunction)
                 }
@@ -50,11 +47,17 @@ public protocol ObservedStateProvider {}
     }
 
     // swiftlint:disable:next identifier_name
-    public func _defaultDispatch(action: Action) async {
+    private func _defaultDispatch(action: Action) async {
         await reducer(action: action)
     }
 
-    public func dispatch(_ action: Action) async {
-        await dispatchFunction?(action)
+    private func _dispatch(_ action: Action) async {
+        await dispatch(action)
     }
 }
+
+@MainActor public protocol State: Sendable {
+    var observedStates: [any ObservedProvider] { get }
+}
+
+public protocol ObservedProvider {}

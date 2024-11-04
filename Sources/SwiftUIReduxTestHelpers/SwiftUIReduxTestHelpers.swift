@@ -36,14 +36,18 @@ public struct AsyncWaiter<Object: SubState> {
         { _, _ in
             { next in
                 { [weak self] action in
-                    let nextAction: Void = next(action)
+                    let nextAction: Void = await next(action)
 
-                    self?.actions.append(action)
+                    await self?.append(action)
 
                     return nextAction
                 }
             }
         }
+    }
+
+    private func append(_ action: Action) async {
+        actions.append(action)
     }
 }
 

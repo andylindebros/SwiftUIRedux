@@ -2,27 +2,21 @@ import Foundation
 import ReduxMonitor
 import SwiftUIRedux
 
-@MainActor public struct AppState: ReduxState {
-    init(
-        main: Main.State = .init()
-    ) {
-        self.main = Observed(initialState: main)
+public struct AppState: State {
+    init(main: Main.State = .init()) {
+        self.main = Observed(initState: main)
     }
 
     let main: Observed<Main.State>
 
-    public var observedStates: [any ObservedStateProvider] {
-        [
-            main
-        ]
-    }
+    public var observedStates: [any ObservedProvider] { [main] }
 
     static func createStore(
         initState: AppState = AppState()
     ) -> Store<AppState> {
         Store<AppState>(state: initState, middleware: [
             LoggerMiddleware.createMiddleware(),
-            SideEffectMiddleware.createMiddleware()
+            SideEffectMiddleware.createMiddleware(),
         ])
     }
 }

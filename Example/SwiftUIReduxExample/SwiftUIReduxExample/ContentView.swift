@@ -1,7 +1,6 @@
 import SwiftUI
 import SwiftUIRedux
 
-@MainActor
 struct ContentView: View {
     let store = AppState.createStore()
 
@@ -13,13 +12,13 @@ struct ContentView: View {
 struct HelloWorldView: View {
     @ObservedObject var main: Observed<Main.State>
     var dispatch: DispatchFunction
-    var randomStrings = ["Andy", "Hanna", "Moa", "Peter", "Ruby", "Tom", "Marcus", "Simon", "Jenny", "Mary", "Zlatan"]
+    static let randomStrings = ["Andy", "Hanna", "Moa", "Peter", "Ruby", "Tom", "Marcus", "Simon", "Jenny", "Mary", "Zlatan"]
 
     var body: some View {
         VStack {
             Text(main.state.observed.name)
             Button(action: {
-                if let name = randomStrings.randomElement() {
+                if let name = Self.randomStrings.randomElement() {
                     Task {
                         await dispatch(Main.Action.setName(to: name))
                     }

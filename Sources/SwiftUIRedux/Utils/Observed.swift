@@ -1,13 +1,13 @@
 import Foundation
 import SwiftUI
 
-
-@MainActor public final class Observed<O: SubState>: ObservedStateProvider, ReducerProvider, ObservableObject {
-    public init(initialState: O) {
-        state = initialState
+@MainActor public final class Observed<O: SubState>: ObservedProvider, ObservableObject {
+    public init(initState: O) {
+        state = initState
     }
 
-    @Published private(set) var observedState: UUID = .init()
+    @Published public private(set) var observedState: UUID = .init()
+
     public private(set) var state: O
 
     private func setState(_ newState: O) async {
@@ -19,12 +19,14 @@ import SwiftUI
         }
     }
 
-    func reducer(action: any Action) async {
-        await setState(O.reducer(action: action, state: state))
-    }
-
     enum CodingKeys: CodingKey {
         case state
+    }
+}
+
+extension Observed: ReducerProvider {
+    func reducer(action: any Action) async {
+        await setState(O.reducer(action: action, state: state))
     }
 }
 

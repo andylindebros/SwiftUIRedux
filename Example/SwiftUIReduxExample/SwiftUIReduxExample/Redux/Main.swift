@@ -9,32 +9,32 @@ enum Main {
         var name: String = "Andy"
     }
 
-    enum Action: SwiftUIRedux.Action, SideEffect, CustomStringConvertible {
+    enum Action: SwiftUIRedux.Action, SideEffect {
         case setName(to: String)
         case sideEffectAction(with: String)
         case thirdEffectAction(with: String)
+        case test
 
-        var desc: String { "Main.\(type(of: self))" }
-        var description: String {
-            switch self {
-            case let .setName(name):
-                "\(desc).setName(to: \(name)"
-            case let .sideEffectAction(with: name):
-                "\(desc).sideEffectAction(with: \(name))"
-            case let .thirdEffectAction(with: name):
-                "\(desc).thirdEffectAction(with: \(name))"
-            }
-        }
-
-        func sideEffect(dispatch: @escaping DispatchFunction, state _: AppState) async {
+        func sideEffect<State>(dispatch: @escaping DispatchFunction, state _: State) async {
             switch self {
             case .setName:
-                await dispatch(Action.sideEffectAction(with: "test"))
+                guard let newName = await HelloWorldView.randomStrings.randomElement() else { return }
+                await dispatch(Action.sideEffectAction(with: newName))
             case .sideEffectAction:
-                await dispatch(Action.thirdEffectAction(with: "complete"))
+
+                guard let newName = await HelloWorldView.randomStrings.randomElement() else { return }
+                await dispatch(
+                    Action.thirdEffectAction(with: newName)
+                )
+            case .thirdEffectAction:
+                await dispatch(Action.test)
             default:
                 break
             }
+        }
+
+        var debugActionName: String {
+            "Main.\(type(of: self))."
         }
     }
 }
