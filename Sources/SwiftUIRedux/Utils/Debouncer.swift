@@ -17,7 +17,7 @@ public extension DebouncerProvider {
     }
 }
 
-public final class Debouncer: DebouncerProvider, @unchecked Sendable {
+public final class Debouncer: DebouncerProvider, Sendable {
     public init(debouncerTimout: TimeInterval = 1) {
         self.debouncerTimout = debouncerTimout
     }
@@ -53,7 +53,7 @@ public final class Debouncer: DebouncerProvider, @unchecked Sendable {
         timers[id] = Timer.scheduledTimer(withTimeInterval: timeout ?? debouncerTimout, repeats: repeats) { [weak self] _ in
             Task { @MainActor [weak self] in
                 guard let self = self, let action = self.actions[id] else { return }
-                dispatch?(action)
+                await dispatch?(action)
                 if !repeats {
                     self.actions.removeValue(forKey: id)
                     self.timers.removeValue(forKey: id)
@@ -63,12 +63,12 @@ public final class Debouncer: DebouncerProvider, @unchecked Sendable {
     }
 }
 
-public class DebouncerMock: DebouncerProvider, @unchecked Sendable {
+public final class DebouncerMock: DebouncerProvider, Sendable {
     public init() {}
     private var dispatch: DispatchFunction?
     public func delay(action: any Action, by _: String, timeout _: TimeInterval?, repeats _: Bool) {
         Task { @MainActor [weak self] in
-            self?.dispatch?(action)
+            await self?.dispatch?(action)
         }
     }
 

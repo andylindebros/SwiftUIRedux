@@ -1,0 +1,15 @@
+{
+  "originHash" : "87dbb5f3d7fa772afb01a61de2b453c015098dcc0790d15c8d31194a4f5eb0e0",
+  "pins" : [
+    {
+      "identity" : "reduxmonitor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lindebrothers/ReduxMonitor",
+      "state" : {
+        "revision" : "c2c6b0859a2828ae01bf6cb4a3ca0b42b35223eb",
+        "version" : "2.0.9"
+      }
+    }
+  ],
+  "version" : 3
+}

@@ -1,42 +1,40 @@
 import Foundation
 import SwiftUI
 
-public final class Observed<O: SubState>: ObservableObject, Codable {
+
+@MainActor public final class Observed<O: SubState>: ObservedStateProvider, ReducerProvider, ObservableObject {
     public init(initialState: O) {
         state = initialState
     }
 
-    @Published public private(set) var observedState: UUID = .init()
+    @Published private(set) var observedState: UUID = .init()
     public private(set) var state: O
 
-    @MainActor @discardableResult fileprivate func setState(_ newState: O) -> Self {
-        let testState = state.observedState
+    private func setState(_ newState: O) async {
+        let oldState = state
         state = newState
-        if !newState.observedState.isObservedStateEqual(to: testState) {
+
+        if oldState.observed != newState.observed {
             observedState = UUID()
         }
-        return self
     }
 
-    public required init(from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        state = try values.decode(O.self, forKey: .state)
+    func reducer(action: any Action) async {
+        await setState(O.reducer(action: action, state: state))
     }
 
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(state, forKey: .state)
-    }
-
-    public enum CodingKeys: CodingKey {
+    enum CodingKeys: CodingKey {
         case state
     }
 }
 
-public protocol ObservedStruct: Sendable, Equatable, Codable {
-    func isObservedStateEqual(to: any ObservedStruct) -> Bool
+public protocol SubState: Sendable, Equatable, Codable {
+    associatedtype O: Equatable
+    var observed: O { get }
+
+    static func reducer(action: any Action, state: Self) -> Self
 }
 
-public protocol SubState: Sendable, Codable {
-    var observedState: any ObservedStruct { get }
+protocol ReducerProvider {
+    func reducer(action: Action) async
 }
