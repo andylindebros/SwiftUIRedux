@@ -14,7 +14,7 @@ public struct AppState: State {
     static func createStore(
         initState: AppState = AppState()
     ) -> Store<AppState> {
-        Store<AppState>(state: initState, middleware: [
+        Store(state: initState, middleware: [
             LoggerMiddleware.createMiddleware(),
             SideEffectMiddleware.createMiddleware(),
         ])

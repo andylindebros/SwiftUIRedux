@@ -59,7 +59,7 @@ Setup the redux store in your SwiftUI App and assign the observed objects your w
 @main
 struct SwiftUIReduxExampleApp: App {
     init() {
-        store = Store<AppState>(state: AppState())
+        store = Store(state: AppState())
         main = store.state.main
     }
 
