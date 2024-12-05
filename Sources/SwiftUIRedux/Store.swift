@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-@MainActor public final class Store<S: State> {
+@MainActor public final class Store<S: SingleState> {
     public private(set) var state: S
 
     public private(set) lazy var dispatch: DispatchFunction = middleware
@@ -56,7 +56,7 @@ import Foundation
     }
 }
 
-@MainActor public protocol State: Sendable {
+@MainActor public protocol SingleState: Sendable {
     var observedStates: [any ObservedProvider] { get }
 }
 

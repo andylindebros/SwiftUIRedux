@@ -1,9 +1,7 @@
 import Foundation
 
 public typealias DispatchFunction = @Sendable (Action) async -> Void
-public typealias Middleware<S: State> = (@escaping DispatchFunction, S) -> (
-    @escaping DispatchFunction
-) -> DispatchFunction
+public typealias Middleware<S: SingleState> = (@escaping DispatchFunction, S) -> (@escaping DispatchFunction) -> DispatchFunction
 
 public protocol SideEffect: Action {
     func sideEffect<State>(dispatch: @escaping DispatchFunction, state: State) async -> Void
@@ -14,7 +12,7 @@ public extension SideEffect {
 }
 
 public enum SideEffectMiddleware {
-    public static func createMiddleware<S: State>() -> Middleware<S> {
+    public static func createMiddleware<S: SingleState>() -> Middleware<S> {
         { dispatch, state in
             { next in
                 { action in
@@ -34,7 +32,7 @@ public enum SideEffectMiddleware {
 }
 
 public enum LoggerMiddleware {
-    public static func createMiddleware<S: State>() -> Middleware<S> {
+    public static func createMiddleware<S: SingleState>() -> Middleware<S> {
         { _, _ in
             { next in
                 { action in

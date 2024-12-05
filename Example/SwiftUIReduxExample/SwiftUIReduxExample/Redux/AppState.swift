@@ -2,7 +2,7 @@ import Foundation
 import ReduxMonitor
 import SwiftUIRedux
 
-public struct AppState: State {
+public struct AppState: SingleState {
     init(main: Main.State = .init()) {
         self.main = Observed(initState: main)
     }
