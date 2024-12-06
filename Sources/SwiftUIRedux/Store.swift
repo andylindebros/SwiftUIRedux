@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public final class Store<S: SingleState>: Sendable {
+@MainActor public final class Store<S: SingleState>: Sendable {
     public init(
         state: S,
         middleware: [Middleware<S>] = []
@@ -13,7 +13,7 @@ public final class Store<S: SingleState>: Sendable {
     public let state: S
 
     public private(set) lazy var dispatch: DispatchFunction = { action in
-        Task { [weak self] in
+        Task { @MainActor [weak self] in
             await self?.dispatchAsync(action)
         }
     }

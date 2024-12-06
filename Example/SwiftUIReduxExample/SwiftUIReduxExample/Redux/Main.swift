@@ -15,14 +15,16 @@ enum Main {
         case thirdEffectAction(with: String)
         case test
 
-        func sideEffect<State>(dispatch: @escaping DispatchAsyncFunction, state _: State) async {
+        func sideEffect<State>(dispatch: @escaping DispatchAsyncFunction, state: State) async {
+            guard let state = state as? AppState else { return }
+            print("🍀 state", self, state.main.state.observed.name)
             switch self {
             case .setName:
-                guard let newName = await HelloWorldView.randomStrings.randomElement() else { return }
+                guard let newName = HelloWorldView.randomStrings.randomElement() else { return }
                 await dispatch(Action.sideEffectAction(with: newName))
             case .sideEffectAction:
 
-                guard let newName = await HelloWorldView.randomStrings.randomElement() else { return }
+                guard let newName = HelloWorldView.randomStrings.randomElement() else { return }
                 await dispatch(
                     Action.thirdEffectAction(with: newName)
                 )
@@ -31,6 +33,8 @@ enum Main {
             default:
                 break
             }
+
+
         }
 
         var debugActionName: String {

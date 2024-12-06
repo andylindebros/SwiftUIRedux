@@ -1,19 +1,19 @@
 import Foundation
 
 public typealias DispatchFunction = @Sendable (Action) -> Void
-public typealias DispatchAsyncFunction = @Sendable (Action) async -> Void
+public typealias DispatchAsyncFunction = @MainActor @Sendable (Action) async -> Void
 public typealias Middleware<S: SingleState> = (@escaping DispatchAsyncFunction, S) -> (@escaping DispatchAsyncFunction) -> DispatchAsyncFunction
 
 public protocol SideEffect: Action {
-    func sideEffect<State: SingleState>(dispatch: @escaping DispatchAsyncFunction, state: State) async -> Void
+    @MainActor func sideEffect<State: SingleState>(dispatch: @escaping DispatchAsyncFunction, state: State) async -> Void
 }
 
 public extension SideEffect {
-    func sideEffect<State: SingleState>(dispatch _: @escaping DispatchAsyncFunction, state _: State) async {}
+    @MainActor func sideEffect<State: SingleState>(dispatch _: @escaping DispatchAsyncFunction, state _: State) async {}
 }
 
 public enum SideEffectMiddleware {
-    public static func createMiddleware<S: SingleState>() -> Middleware<S> {
+    @MainActor public static func createMiddleware<S: SingleState>() -> Middleware<S> {
         { dispatch, getState in
             { next in
                 { action in

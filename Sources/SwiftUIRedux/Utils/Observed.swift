@@ -25,7 +25,7 @@ import SwiftUI
 }
 
 extension Observed: ReducerProvider {
-    func reducer(action: any Action) async {
+    @MainActor func reducer(action: any Action) async {
         await setState(O.reducer(action: action, state: state))
     }
 }
@@ -34,9 +34,9 @@ public protocol SubState: Sendable, Equatable, Codable {
     associatedtype O: Equatable
     var observed: O { get }
 
-    static func reducer(action: any Action, state: Self) -> Self
+    @MainActor static func reducer(action: any Action, state: Self) -> Self
 }
 
 protocol ReducerProvider {
-    func reducer(action: Action) async
+    @MainActor func reducer(action: Action) async
 }
