@@ -9,9 +9,9 @@ struct ContentView: View {
     }
 }
 
-struct HelloWorldView: View {
+struct HelloWorldView: View, Sendable {
     @ObservedObject var main: Observed<Main.State>
-    var dispatch: DispatchFunction
+    let dispatch: DispatchFunction
     static let randomStrings = ["Andy", "Hanna", "Moa", "Peter", "Ruby", "Tom", "Marcus", "Simon", "Jenny", "Mary", "Zlatan"]
 
     var body: some View {
@@ -19,9 +19,7 @@ struct HelloWorldView: View {
             Text(main.state.observed.name)
             Button(action: {
                 if let name = Self.randomStrings.randomElement() {
-                    Task {
-                        await dispatch(Main.Action.setName(to: name))
-                    }
+                    dispatch(Main.Action.setName(to: name))
                 }
             }) {
                 Text("Update")

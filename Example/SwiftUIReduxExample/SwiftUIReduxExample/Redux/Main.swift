@@ -15,7 +15,7 @@ enum Main {
         case thirdEffectAction(with: String)
         case test
 
-        func sideEffect<State>(dispatch: @escaping DispatchFunction, state _: State) async {
+        func sideEffect<State>(dispatch: @escaping DispatchAsyncFunction, state _: State) async {
             switch self {
             case .setName:
                 guard let newName = await HelloWorldView.randomStrings.randomElement() else { return }

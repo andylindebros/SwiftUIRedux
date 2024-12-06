@@ -1,10 +1,24 @@
 import Combine
 import Foundation
 
-@MainActor public final class Store<S: SingleState> {
-    public private(set) var state: S
+public final class Store<S: SingleState>: Sendable {
+    public init(
+        state: S,
+        middleware: [Middleware<S>] = []
+    ) {
+        self.middleware = middleware
+        self.state = state
+    }
 
-    public private(set) lazy var dispatch: DispatchFunction = middleware
+    public let state: S
+
+    public private(set) lazy var dispatch: DispatchFunction = { action in
+        Task { [weak self] in
+            await self?.dispatchAsync(action)
+        }
+    }
+
+    public private(set) lazy var dispatchAsync: DispatchAsyncFunction = middleware
         .reversed()
         .reduce(
             { [weak self] action in
@@ -15,25 +29,16 @@ import Foundation
             }
         )
 
-    public var middleware: [Middleware<S>]
+    public let middleware: [Middleware<S>]
 
-    public init(
-        state: S,
-        middleware: [Middleware<S>] = []
-    ) {
-        self.middleware = middleware
-        self.state = state
-
-        // dispatchFunction = createDispatchFunction()
-    }
 
     func reducer(action: Action) async {
-        for state in state.observedStates.compactMap { $0 as? any ReducerProvider } {
+        for state in await state.observedStates.compactMap { $0 as? any ReducerProvider } {
             await state.reducer(action: action)
         }
     }
 
-    private func createDispatchFunction() -> DispatchFunction {
+    private func createDispatchFunction() -> DispatchAsyncFunction {
         middleware
             .reversed()
             .reduce(
@@ -41,7 +46,7 @@ import Foundation
                     await self?._defaultDispatch(action: action) },
 
                 { dispatchFunction, middleware in
-                    middleware(dispatch, state)(dispatchFunction)
+                    middleware(dispatchAsync, state)(dispatchFunction)
                 }
             )
     }
@@ -52,7 +57,7 @@ import Foundation
     }
 
     private func _dispatch(_ action: Action) async {
-        await dispatch(action)
+        await dispatchAsync(action)
     }
 }
 
